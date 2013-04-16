@@ -285,42 +285,19 @@ window.onload=function(){
               var llag=[1,0],
                   rlag=[1,0],
                   pl=0,
-                  i=0;
+                  i=-1;pi=8;
+
               function d(){
                 clear();
                 init();
-               /* if(pl==0){
-                  llag[0]+=fg[0];
-                  
-                  rlag[0]+=fg[0];
-                  
-                  
-                    rlag[1]+=fg[1];
-                    llag[1]-=fg[1];
-                  
-                  if(llag[0]>=3){
-                    pl=1;
-                    //llag[1]=0;
-                    //rlag[1]=0;
-                  }
-                }else{
-                  llag[0]-=fg[0];
-                  
-                  rlag[0]-=fg[0];
-                  
-                  if(llag[1]>0){
-                    rlag[1]-=fg[1];
-                    llag[1]+=fg[1];
-                  }
-                  if(llag[0]<=0){
-                    pl=0;
-
-                  }
-                }
-                tt.x-=fg[2];*/
-                i++;
+              
+                tt.x-=fg[2];
+                pi=i;i++;
+                if(i>8){i=0}
                 llag[0]=anm[i][0];
-                llag[1]=anm[i][1]
+                llag[1]=anm[i][1];
+               rlag[0]=-anm[8-i][0];
+               rlag[1]=-anm[8-i][1];
                 c.beginPath();
                 tt.draw(tt.x,tt.yy);
                 //tt.hands(1,1,t(h.yy));
@@ -331,7 +308,7 @@ window.onload=function(){
                   clearInterval(ii);
                 }  
               }
-              var ii=setInterval(d,300);
+              var ii=setInterval(d,100);
               /*c.beginPath();
               tt.draw(h.x,h.yy);
               //tt.hands(1,1,t(h.yy));
@@ -362,6 +339,31 @@ window.onload=function(){
    window.h=new hero(1,0);
    h.show();
    var cn=document.querySelectorAll('a');
+    for(i in cn){
+       cn[i].onclick=function(){
+            e=this.text;
+            //alert(e)
+            switch(e){
+                 case 'top': 
+                 // alert(e); 
+                   h.move(h.x,h.yy+2,'j',function(){
+                  h.fall(function(){
+                    bu.Up=0;
+                    //alert(h.yy);
+                  });
+              });
+                  break
+                  case 'left':
+                      h.move(h.x-1,h.yy,'r',function(){
+                  /*h.fall(function(){
+                    bu.Up=0;
+                  
+                  });*/
+              });
+                  break
+            }
+       }
+    }
    window.bu={Up:0,Left:0,Right:0};
    window.onkeyup=function(e){
    
@@ -409,5 +411,6 @@ window.onload=function(){
           break;
         }      
    }
+   
 }
 </script>
