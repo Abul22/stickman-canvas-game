@@ -266,15 +266,19 @@ window.onload=function(){
             case 'r':
               //alert(1);
 
-              var fg=[0.1,0.1,0.01];
+            /*   var fg=[0.1,0.1,0.1];
               if(x>this.x){
                 var fg=[fg[0],-fg[1],-fg[2]];
               }
               tt=this;
+              abi=0;
               jd=tt.x-x;
+              napr='right';
+              if(jd>tt.x){napr='left';}
               var anm=[
                         [1,-1],
-                        [0,-1],
+                       // [0.3,-1],
+                        [0,-0.5],
                         [-1,-2],
                         [-2,-3],
                         [-2,-4],
@@ -282,22 +286,39 @@ window.onload=function(){
                         [1,-2],
                         [1,0]
               ];
+              anml=anm.length-1;
+              function getp(a){
+                ce=a-3;
+                if(ce<0){ce=(anml)+ce}
+                return ce;  
+              }
               var llag=[1,0],
                   rlag=[1,0],
                   pl=0,
                   i=-1;pi=8;
 
-              function d(){
+               function d(){
+                abi++;
                 clear();
                 init();
               
-                tt.x-=fg[2];
+              tt.x-=fg[2];
                 pi=i;i++;
-                if(i>8){i=0}
-                llag[0]=anm[i][0];
-                llag[1]=anm[i][1];
-               rlag[0]=-anm[8-i][0];
-               rlag[1]=-anm[8-i][1];
+                if(i>anml){i=0}
+                
+                if(napr=='left'){
+                  llag[0]=anm[i][0];
+                  llag[1]=anm[i][1];
+                  //console.log(i+' '+getp(i));
+                  rlag[0]=-anm[getp(i)][0];
+                  rlag[1]=-anm[getp(i)][1];
+                }else{
+                  llag[0]=-anm[i][0];
+                  llag[1]=-anm[i][1];
+                  //console.log(i+' '+getp(i));
+                  rlag[0]=anm[getp(i)][0];
+                  rlag[1]=anm[getp(i)][1];
+                }
                 c.beginPath();
                 tt.draw(tt.x,tt.yy);
                 //tt.hands(1,1,t(h.yy));
@@ -306,7 +327,104 @@ window.onload=function(){
                 c.stroke();
                 if(tt.x.toFixed(0)==x){
                   clearInterval(ii);
+                  //alert(abi);
+                  clear();
+                  init();
+                  c.beginPath();
+                  tt.draw(h.x,h.yy);
+                  //tt.hands(1,1,t(h.yy));
+                  tt.lags([1,0],[1,0],t(h.yy));
+                  c.closePath();
+                  c.stroke();
+                  tt.x=x;
                 }  
+              }*/
+              var lag={
+                left:[1,0],
+                right:[1,0]
+              };
+              var val=[0.1,0.4];
+              function rend(lag){
+                clear();
+                init();
+                c.beginPath();
+                tt.draw(h.x,h.yy);
+                
+                tt.lags(lag.left,lag.right,t(h.yy));
+                c.closePath();
+                c.stroke();
+              }
+              var p=0;
+              p1=1;
+              var cc=val[0],
+                  cc1=val[1],
+                  cc2=val[1],
+                  jd=tt.x-x;
+                  
+              function d(){
+               if(jd>0){
+                if(p==0){
+                  lag.left[0]-=cc;
+                  lag.left[1]+=0.1;
+                  if(lag.left[0].toFixed(1)==-2){
+                    p=1;
+                    cc1=val[1];
+                  }
+                }else{
+                  lag.left[0]+=cc;
+                  lag.left[1]-=cc1;
+                  if(lag.left[1]<=1){
+                    //console.log(lag.left[1]);
+                    cc1=0;
+                  }
+                  if(lag.left[0]>=1){
+                    p=0;
+                  }
+                }
+
+
+                if(p1==0){
+                  lag.right[0]+=cc;
+                  lag.right[1]-=0.1;
+                  if(lag.right[0].toFixed(1)==2){
+                    p1=1;
+                    cc2=val[1];
+                  }
+                }else{
+                  lag.right[0]-=cc;
+                  lag.right[1]+=cc2;
+                  if(lag.right[1]>=-1){
+                    cc2=0;
+                  }
+                  if(lag.right[0]<=-1){
+                    p1=0;
+                  }
+                }
+              }else{
+                
+              }
+               
+             /*   if(p1==0){
+                  lag.left[1]-=cc;
+                  if(lag.left[0]<=-2){
+                    p1=1;
+                  }
+                }else{
+                  lag.left[0]+=cc;
+                  if(lag.left[0]>=0){
+                    p1=0;
+                  }
+                }*/
+               // tt.x+=0.02;
+             /*   if(tt.x>=x){
+                  clearInterval(ii);
+                  lag.right[1]=0;
+                  lag.right[0]=1;
+
+                  lag.left[1]=0;
+                  lag.left[0]=1;
+                }*/
+                rend(lag);
               }
               var ii=setInterval(d,100);
               /*c.beginPath();
