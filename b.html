@@ -10,9 +10,9 @@ a:active{
 }
 </style>
 <canvas id="c" style="border:1px solid;"></canvas>
-<a role="button">left</a>
-<a role="button">top</a>
-<a role="button">right</a>
+<a href="#">left</a>
+<a  href="#">top</a>
+<a href="#">right</a>
 <script>
 window.onload=function(){
    w=document.getElementById('c').width=1000;
@@ -118,7 +118,7 @@ window.onload=function(){
           for(i in clouds){
               var a=clouds[i];
               
-              if((a[1]<=x) & ((a[1]+a[2])>=x) & ((a[0]+1)==y)){
+              if((a[1]<=x) & ((t(a[1])+a[2])>=t(x)) & ((a[0]+1)==y)){
                 c=i*1;
               }
           }
@@ -130,7 +130,7 @@ window.onload=function(){
             a;
         for(i in clouds){
           a=clouds[i];
-          if((a[1]<=x) & (a[1]+a[2]>=x) & (a[0]>c)){
+          if((a[1]<=x) & (t(a[1])+a[2]>=t(x)) & (a[0]>c)){
             c=a[0]+1;
           }
         }
@@ -235,7 +235,7 @@ window.onload=function(){
                     h.lags([lag,lag/2.5],[lag,lag/2.5],t(h.yy));
                     c.closePath();
                     c.stroke();
-                    if(prc==1){
+                    if(prc>=1){
                       clearInterval(e2);
                       
                       
@@ -295,13 +295,13 @@ window.onload=function(){
               var llag=[1,0],
                   rlag=[1,0],
                   pl=0,
-                  i=-1;pi=8;
+                  i=-1;pi=8;ha=0.1;hand=[1,1];
 
                function d(){
                 abi++;
                 clear();
                 init();
-              
+              if(hand[0]>=2){hand[0]-=0.1;hand[1]+=0.1}else{hand[0]+=0.1;hand[1]-=0.1}
               tt.x-=fg[2];
                 pi=i;i++;
                 if(i>anml){i=0}
@@ -344,12 +344,12 @@ window.onload=function(){
                 right:[1,0]
               };
               var val=[0.1,0.4];
-              function rend(lag){
+              function rend(lag,han){
                 clear();
                 init();
                 c.beginPath();
                 tt.draw(h.x,h.yy);
-                
+                tt.hands(han[0],han[1],t(h.yy));
                 tt.lags(lag.left,lag.right,t(h.yy));
                 c.closePath();
                 c.stroke();
@@ -359,10 +359,11 @@ window.onload=function(){
               var cc=val[0],
                   cc1=val[1],
                   cc2=val[1],
-                  jd=tt.x-x;
-                  
+                  jd=tt.x-x;i
+                  hand=[1,1];ph=0;
               function d(){
-               if(jd>0){
+                if(ph==0){hand[0]-=0.1;hand[1]-=0.1;if(hand[0]<=-2){ph=1;}}else{hand[0]+=0.1;hand[1]+=0.1;if(hand[0]>=2){ph=0;}}
+               if(jd<0){
                 if(p==0){
                   lag.left[0]-=cc;
                   lag.left[1]+=0.1;
@@ -399,9 +400,47 @@ window.onload=function(){
                   if(lag.right[0]<=-1){
                     p1=0;
                   }
+                }tt.x+=0.01;
+ /*%%*/ }else{
+                //
+                if(p==0){
+                  lag.left[0]+=cc;
+                  lag.left[1]-=0.1;
+                  if(lag.left[0]>=2){
+                    p=1;
+                    cc1=val[1];
+                  }
+                }else{
+                  lag.left[0]-=cc;
+                  lag.left[1]+=cc1;
+                  if(lag.left[1]>=-1){
+                    //console.log(lag.left[1]);
+                    cc1=0;
+                  }
+                  if(lag.left[0]<=-1){
+                    p=0;
+                  }
                 }
-              }else{
-                
+
+
+                if(p1==0){
+                  lag.right[0]-=cc;
+                  lag.right[1]+=0.1;
+                  if(lag.right[0]<=-2){
+                    p1=1;
+                    cc2=val[1];
+                  }
+                }else{
+                  lag.right[0]+=cc;
+                  lag.right[1]-=cc2;
+                  if(lag.right[1]<=1){
+                    cc2=0;
+                  }
+                  if(lag.right[0]>=1){
+                    p1=0;
+                  }
+                }
+                tt.x-=0.01;
               }
                
              /*   if(p1==0){
@@ -416,17 +455,21 @@ window.onload=function(){
                   }
                 }*/
                // tt.x+=0.02;
-             /*   if(tt.x>=x){
+                if(tt.x.toFixed(1)==x){
                   clearInterval(ii);
                   lag.right[1]=0;
                   lag.right[0]=1;
-
+                 tt.x=x;
                   lag.left[1]=0;
                   lag.left[0]=1;
-                }*/
-                rend(lag);
+                  hand[0]=1;hand[1]=1;
+                  fun();
+                }
+                
+                rend(lag,hand);
+                if(tt.onc(tt.x,tt.yy)===false & tt.yy!=0){tt.fall(function(){}); clearInterval(ii); }
               }
-              var ii=setInterval(d,100);
+              var ii=setInterval(d,1);
               /*c.beginPath();
               tt.draw(h.x,h.yy);
               //tt.hands(1,1,t(h.yy));
@@ -440,8 +483,8 @@ window.onload=function(){
           
       };
       this.fall=function(func){
-          
-          if(this.onc(this.x,this.yy)===false){
+          //alert(this.onc(this.x,this.yy));
+          if(this.onc(this.x,this.yy)===false & this.yy>0){
             yf=this.bch(this.x,this.yy);
             //alert(this.bch(this.x,this.yy));
             this.move(this.x,yf,'f',func);
@@ -453,9 +496,32 @@ window.onload=function(){
       }
       
    }
+   var mob=function(x,y,l,top){
+        this.x=x;
+        this.y=y;
+        this.l=l;
+        this.t=top;
+        this.draw=function(){
+          // alert(t);
+          c.beginPath(); 
+              c.translate(190,h2-t(this.y));
+          /// c.scale(2,4);
+       c.rotate(-3.15);
+              c.arc(t(this.x),h2-t(this.y)-15,15,0,1*Math.PI,false);
+        //  c.arc(t(this.x),h2-15-t(this.y),15,0,2*Math.PI,false);
+       //   c.arc();
+           
+           c.closePath();
+           c.fillStyle="red";
+            c.fill();
+        }
+       //this.draw();
+   }
    init();
    window.h=new hero(1,0);
    h.show();
+   window.mob1=new mob(0,0,10,10);
+   mob1.draw();
    var cn=document.querySelectorAll('a');
     for(i in cn){
        cn[i].onclick=function(){
@@ -473,14 +539,21 @@ window.onload=function(){
                   break
                   case 'left':
                       h.move(h.x-1,h.yy,'r',function(){
-                  /*h.fall(function(){
-                    bu.Up=0;
+                    /*  h.fall(function(){
+                   // bu.Up=0;
                   
                   });*/
               });
                   break
+                  case 'right': 
+                       h.move(h.x+1,h.yy,'r',function(){/*h.fall(function(){})*/});
+                  break;
             }
+            return false;
        }
+      cn[i].onmouseup=function(){
+        //  alert(1);
+      }
     }
    window.bu={Up:0,Left:0,Right:0};
    window.onkeyup=function(e){
@@ -529,6 +602,7 @@ window.onload=function(){
           break;
         }      
    }
+   
    
 }
 </script>
