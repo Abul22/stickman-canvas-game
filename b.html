@@ -68,7 +68,7 @@ window.onload=function(){
       }
      
       e(ll);e(rr);
-      
+      this.han_arr={l:l,r:r,z:z};
      // c.stroke();
       
     }
@@ -96,7 +96,7 @@ window.onload=function(){
       c.moveTo(ox-a.x,w-z-566-t(y)-a.y);
       b=this.getr(radius,rr2);
       c.lineTo(ox-a.x-b.x,w-z-566-t(y)-a.y-b.y);
-      
+      this.lag_arr={l:l,r:r,z:z};
       //c.stroke();
     }
      this.show=function(){
@@ -362,7 +362,20 @@ window.onload=function(){
                   jd=tt.x-x;i
                   hand=[1,1];ph=0;
               function d(){
-                if(ph==0){hand[0]-=0.1;hand[1]-=0.1;if(hand[0]<=-2){ph=1;}}else{hand[0]+=0.1;hand[1]+=0.1;if(hand[0]>=2){ph=0;}}
+                if(ph==0){
+                  hand[0]-=0.1;
+                  hand[1]-=0.1;
+                  if(hand[0]<=-2){
+                    ph=1;
+                  }
+                }else{
+                  hand[0]+=0.1;
+                  hand[1]+=0.1;
+                  if(hand[0]>=2){
+                    ph=0;
+                  }
+                }
+
                if(jd<0){
                 if(p==0){
                   lag.left[0]-=cc;
@@ -455,7 +468,7 @@ window.onload=function(){
                   }
                 }*/
                // tt.x+=0.02;
-                if(tt.x.toFixed(1)==x){
+                if((tt.x>=x && jd<0) || (tt.x<=x && jd>0)){
                   clearInterval(ii);
                   lag.right[1]=0;
                   lag.right[0]=1;
@@ -482,15 +495,27 @@ window.onload=function(){
 
           
       };
+      this.setzero=function(){
+          for(i in bu){
+            bu[i]=0;
+          }
+      }
       this.fall=function(func){
           //alert(this.onc(this.x,this.yy));
           if(this.onc(this.x,this.yy)===false & this.yy>0){
             yf=this.bch(this.x,this.yy);
             //alert(this.bch(this.x,this.yy));
-            this.move(this.x,yf,'f',func);
+            tt=this;           
+            var ffun=function(){
+              tt.setzero();
+              func();
+            }
+            this.move(this.x,yf,'f',ffun);
           }else{
             func();
+
           }
+
           //alert(this.yy);
         
       }
@@ -504,24 +529,30 @@ window.onload=function(){
         this.draw=function(){
           // alert(t);
           c.beginPath(); 
-              c.translate(190,h2-t(this.y));
+              //c.translate(190,h2-t(this.y));
           /// c.scale(2,4);
-       c.rotate(-3.15);
-              c.arc(t(this.x),h2-t(this.y)-15,15,0,1*Math.PI,false);
-        //  c.arc(t(this.x),h2-15-t(this.y),15,0,2*Math.PI,false);
-       //   c.arc();
-           
-           c.closePath();
-           c.fillStyle="red";
-            c.fill();
+       //c.rotate(-3.15);
+          c.fillStyle="red";
+          c.arc(t(this.x),h2-t(this.y)-45,15,0,2*Math.PI,false);
+          c.fillRect(t(this.x)-15,h2-t(this.x)+15,30,30);
+          //c.translate(190,h2-t(this.y));
+          //c.scale(2,1);
+          c.arc(t(this.x),h2-t(this.y)-12,4,0,2*Math.PI,false);
+          c.closePath();
+          c.fillStyle="red";
+          c.fill();
+        }
+        this.moving=function(){
+
         }
        //this.draw();
    }
    init();
    window.h=new hero(1,0);
    h.show();
-   window.mob1=new mob(0,0,10,10);
+   window.mob1=new mob(2,0,10,10);
    mob1.draw();
+
    var cn=document.querySelectorAll('a');
     for(i in cn){
        cn[i].onclick=function(){
@@ -580,25 +611,31 @@ window.onload=function(){
    window.onkeydown=function(e){
         switch(e.keyIdentifier){
           case 'Left':
-            if(bu.Up==0){
+            if(bu.Left==0){
               //bu.L=1;
-              
+              bu.Left=1;
               h.move(h.x-1,h.yy,'r',function(){
                   /*h.fall(function(){
-                    bu.Up=0;
+                   
                   
                   });*/
+               bu.Left=0;
               });
             }
             
           break
           case 'Right':
-            h.move(h.x+1,h.yy,'r',function(){
+            if(bu.Right==0){
+                bu.Right=1;
+               h.move(h.x+1,h.yy,'r',function(){
                   /*h.fall(function(){
                     bu.Up=0;
                   
                   });*/
+                bu.Right=0;
               });
+            }
+           
           break;
         }      
    }
