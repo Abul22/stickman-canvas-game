@@ -1,4 +1,3 @@
-rscrystcytsv
+Stickman canvas game
 ============
-
-aa
+The canvas game about stickman and monsters
